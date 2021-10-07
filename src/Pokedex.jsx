@@ -4,137 +4,51 @@ import data from './data';
 import './Pokedex.css';
 
 class Pokedex extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
       index: 0,
-      fire: false,
-      psychic: false,
+      filter: data,
     }
     this.nextPokemon = this.nextPokemon.bind(this)
   }
 
-  nextPokemon({ target }) {    
-    this.setState((previousState, _props) => {
-      if (target.className === 'next-btn') {
-        if (previousState.fire) {
-          if (previousState.index === 6) {
-            
-            return {
-              index: 1,
-              fire: true,
-            }
-          } else {
-            return {
-              index: 6,
-              fire: true,
-            }
-          }
-        }
-
-        if (previousState.psychic) {
-          if (previousState.index === 5) {
-            
-            return {
-              index: 4,
-              psychic: true,
-            }
-          } else {
-            return {
-              index: 5,
-              psychic: true,
-            }
-          }
-        }
-
-        if (previousState.index === data.length -1) {
-          return {
-            index: 0,
-          }
-        }
-        return {
-          index: previousState.index + 1,
-        }
-      }
-
-      if (target.className === 'all') {
-        target.parentNode.nextElementSibling.removeAttribute('disabled');
-        return {
-          index: 0,
-          fire:false,
-        psychic: false,
-        }
-      }
-
-      if (target.className === 'eletric') {
-        target.parentNode.nextElementSibling.disabled = 'true';
-        return {
-          index: 0,
-        }
-      }
-
-      if (target.className === 'fire') {
-          target.parentNode.nextElementSibling.removeAttribute('disabled');
-        return {
-          index: 1,
-          fire: true,
-        }
-      }
-
-      if (target.className === 'bug') {
-        target.parentNode.nextElementSibling.disabled = 'true';
-        return {
-          index: 2,
-        }
-      }
-
-      if (target.className === 'poison') {
-        target.parentNode.nextElementSibling.disabled = 'true';
-        return {
-          index: 3,
-        }
-      }
-
-      if (target.className === 'psychic') {
-        target.parentNode.nextElementSibling.removeAttribute('disabled');
-      return {
-        index: 4,
-        fire:false,
-        psychic: true,
-      }
-    }
-
-    if (target.className === 'normal') {
-      target.parentNode.nextElementSibling.disabled = 'true';
-      return {
-        index: 7,
-      }
-    }
-
-    if (target.className === 'dragon') {
-      target.parentNode.nextElementSibling.disabled = 'true';
-      return {
-        index: 8,
-      }
-    }
-
+  nextPokemon() {  
+    this.setState(({ filter, index }, _props) => {
+      return (filter.length - 1 === index) ? { index: 0 } : { index: index + 1 }
     })
   }
 
+  setPokemonByType = ( { target: { className }} ) => {
+    this.setState((_previousState, _props) => {
+      if (className === 'all') {
+        return {
+          index: 0,
+          filter: data,
+        }
+      }
+      return {
+        index: 0,
+        filter: data.filter(({ type }) => type.toLowerCase() === className),
+      }
+    });
+  }
+
   render() {
+    const { state: { filter, index } } = this;
     return (
       <div className="main-content">
-      <Pokemon pokemon={data[this.state.index]}  />
+      <Pokemon pokemon={filter[index]} />
       <div className="buttons-container">
         <div className="type-btn-container">
-          <button className="all" onClick={ this.nextPokemon }>All</button>
-          <button className="eletric" onClick={ this.nextPokemon }>Eletric</button>
-          <button className="fire" onClick={ this.nextPokemon }>Fire</button>
-          <button className="bug" onClick={ this.nextPokemon }>Bug</button>
-          <button className="poison" onClick={ this.nextPokemon }>Poison</button>
-          <button className="psychic" onClick={ this.nextPokemon }>Psychic</button>
-          <button className="normal" onClick={ this.nextPokemon }>Normal</button>
-          <button className="dragon" onClick={ this.nextPokemon }>Dragon</button>
+          <button className="all" onClick={ this.setPokemonByType }>All</button>
+          <button className="electric" onClick={ this.setPokemonByType }>Eletric</button>
+          <button className="fire" onClick={ this.setPokemonByType }>Fire</button>
+          <button className="bug" onClick={ this.setPokemonByType }>Bug</button>
+          <button className="poison" onClick={ this.setPokemonByType }>Poison</button>
+          <button className="psychic" onClick={ this.setPokemonByType }>Psychic</button>
+          <button className="normal" onClick={ this.setPokemonByType }>Normal</button>
+          <button className="dragon" onClick={ this.setPokemonByType }>Dragon</button>
         </div>
         <button className="next-btn" onClick={ this.nextPokemon } >Próximo Pokemon</button>
       </div>
